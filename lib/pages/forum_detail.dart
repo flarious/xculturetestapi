@@ -88,10 +88,10 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                               const Text("Tags Area"),
                               const SizedBox(height: 10),
                               Row(
-                                children: const [
-                                  Icon(Icons.account_circle),
-                                  SizedBox(width: 5),
-                                  Text("Alex Wongwathana")
+                                children: [
+                                  const Icon(Icons.account_circle),
+                                  const SizedBox(width: 5),
+                                  (snapshot.data!.incognito == false) ? Text(snapshot.data!.author) : const Text("Author")
                                 ],
                               ),
                               const SizedBox(height: 10),

@@ -4,6 +4,7 @@ class Forum {
   final String subtitle;
   final String content;
   final String thumbnail;
+  final String author;
   final bool incognito;
   final int viewed;
   final int favorited;
@@ -16,6 +17,7 @@ class Forum {
     required this.subtitle,
     required this.content,
     required this.thumbnail, 
+    required this.author,
     required this.incognito,
     required this.viewed,
     required this.favorited,
@@ -30,6 +32,7 @@ class Forum {
       subtitle: json['subtitle'],
       content: json['content'],
       thumbnail: json['thumbnail'],
+      author: json['author'],
       incognito: json['incognito'],
       viewed: json['viewed'],
       favorited: json['favorite_amount'],
