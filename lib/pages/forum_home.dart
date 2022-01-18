@@ -60,7 +60,8 @@ class _ForumPageState extends State<ForumPage> {
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 22),
                 ),
                 const Spacer(),
-                TextButton(onPressed: () {
+                TextButton(
+                  onPressed: () {
                   Navigator.pushNamed(context, 'forumAllPage', arguments: _futureForum).then(refreshPage);
                 }, 
                 child: const Text("see all")),
@@ -74,7 +75,7 @@ class _ForumPageState extends State<ForumPage> {
               builder: (BuildContext context, AsyncSnapshot<List<Forum>> snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
-                    itemCount: (snapshot.data!.length <= 5) ? snapshot.data?.length : 5,
+                    itemCount: (snapshot.data!.length <= 5) ? snapshot.data!.length : 5,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(

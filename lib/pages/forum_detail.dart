@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'data.dart';
@@ -19,6 +19,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   Widget build(BuildContext context) {
     final forumDetail = ModalRoute.of(context)!.settings.arguments as Forum;
     fullDetail = getFullDetail(forumDetail.id);
+
     setState(() {
       forumViewed(forumDetail.id);
     });
@@ -32,6 +33,9 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
             future: fullDetail,
             builder: (BuildContext context, AsyncSnapshot<Forum> snapshot) {
               if (snapshot.hasData) {
+                var dt = DateTime.parse(snapshot.data!.updateDate).toLocal();
+                String formattedDate = DateFormat('dd/MM/yyyy – HH:mm a').format(dt);
+
                 return Stack(
                   children: [
                     Positioned(
@@ -97,7 +101,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                               const SizedBox(height: 10),
                               Row(
                                 children: [
-                                  Text(snapshot.data!.updateDate),
+                                  Text(formattedDate),
                                 ],
                               ),
                               const SizedBox(height: 10),

@@ -33,7 +33,7 @@ class _EditForumPageState extends State<EditForumPage>{
       appBar: AppBar(
         title: const Center(
           child: Text(
-            "Post Forum",
+            "Edit Forum",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
           ),
         ),
@@ -77,7 +77,7 @@ class _EditForumPageState extends State<EditForumPage>{
                 });
                 Navigator.pop(context, forumDetail.id);
               }, 
-              child: const Text('Post Forum'),
+              child: const Text('Edit Forum'),
             )
           ],
         ),

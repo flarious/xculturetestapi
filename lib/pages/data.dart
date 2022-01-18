@@ -22,7 +22,7 @@ class Forum {
     required this.viewed,
     required this.favorited,
     required this.date,
-    required this.updateDate
+    required this.updateDate,
   });
 
   factory Forum.fromJson(Map<String, dynamic> json) {
@@ -38,6 +38,41 @@ class Forum {
       favorited: json['favorite_amount'],
       date: json['date'],
       updateDate: json['update_date'],
+    );
+  }
+}
+
+class Comment {
+  final int id;
+  final String content;
+  final String author;
+  final bool incognito;
+  final int replied;
+  final int favorited;
+  final String date;
+  final String updateDate;
+
+  Comment({
+    required this.id,
+    required this.content,
+    required this.author,
+    required this.incognito,
+    required this.replied,
+    required this.favorited,
+    required this.date,
+    required this.updateDate,
+  });
+
+  factory Comment.fromJson(Map<String, dynamic> json) {
+    return Comment(
+      id: json["id"],
+      content: json["body"],
+      author: json["author"],
+      incognito: json["incognito"],
+      replied: json["reply_amount"],
+      favorited: json["liked"],
+      date: json["date"],
+      updateDate: json["update_date"],
     );
   }
 }
