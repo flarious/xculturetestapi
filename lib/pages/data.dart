@@ -10,6 +10,7 @@ class Forum {
   final int favorited;
   final String date;
   final String updateDate;
+  final List<Comment> comments;
 
   Forum({
     required this.id, 
@@ -23,6 +24,7 @@ class Forum {
     required this.favorited,
     required this.date,
     required this.updateDate,
+    required this.comments,
   });
 
   factory Forum.fromJson(Map<String, dynamic> json) {
@@ -38,7 +40,16 @@ class Forum {
       favorited: json['favorite_amount'],
       date: json['date'],
       updateDate: json['update_date'],
+      comments: getCommentsFromJson(json['comments']),
     );
+  }
+
+  static List<Comment> getCommentsFromJson(comments) {
+    List<Comment> list = [];
+    if(comments != null) {
+      comments.forEach( (obj) => list.add(Comment.fromJson(obj)));
+    }
+    return list;
   }
 }
 

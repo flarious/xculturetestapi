@@ -140,7 +140,21 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                               const SizedBox(height: 20),
                               const Text("Comments",
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                                      fontWeight: FontWeight.bold)
+                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: snapshot.data!.comments.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      child: ListTile(
+                                        title: (snapshot.data!.comments[index].incognito == false) ? Text(snapshot.data!.comments[index].author) : const Text("Author"),
+                                        subtitle: Text(snapshot.data!.comments[index].content),
+                                      ),
+                                    );
+                                  }
+                                )
+                              )
                             ],
                           ),
                         ))
