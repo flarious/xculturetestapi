@@ -10,7 +10,7 @@ class Forum {
   final int favorited;
   final String date;
   final String updateDate;
-  final List<Comment> comments;
+  final List<Comment> comments; 
 
   Forum({
     required this.id, 
@@ -62,6 +62,7 @@ class Comment {
   final int favorited;
   final String date;
   final String updateDate;
+  final List<Reply> replies;
 
   Comment({
     required this.id,
@@ -72,6 +73,7 @@ class Comment {
     required this.favorited,
     required this.date,
     required this.updateDate,
+    required this.replies,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -82,6 +84,49 @@ class Comment {
       incognito: json["incognito"],
       replied: json["reply_amount"],
       favorited: json["liked"],
+      date: json["date"],
+      updateDate: json["update_date"],
+      replies: getRepliesFromJson(json["replies"]),
+    );
+  }
+
+  static List<Reply> getRepliesFromJson(replies) {
+    List<Reply> list = [];
+    if (replies != null) {
+      replies.forEach( (obj) => list.add(Reply.fromJson(obj)));
+      list.sort((a, b) => a.id.compareTo(b.id));
+    }
+    return list;
+
+  }
+}
+
+class Reply {
+  final int id;
+  final String content;
+  final String author;
+  final bool incognito;
+  final int favorited;
+  final String date;
+  final String updateDate;
+
+  Reply({
+    required this.id,
+    required this.content,
+    required this.author,
+    required this.incognito,
+    required this.favorited,
+    required this.date,
+    required this.updateDate,
+  });
+
+  factory Reply.fromJson(Map<String, dynamic> json) {
+    return Reply(
+      id: json["id"],
+      content: json["body"],
+      author: json["author"],
+      incognito: json["incognito"],
+      favorited: json["liked_reply"],
       date: json["date"],
       updateDate: json["update_date"],
     );

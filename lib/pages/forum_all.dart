@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'data.dart';
+import '../data.dart';
 
 class ForumAllPage extends StatefulWidget {
   const ForumAllPage({Key? key}) : super(key: key);

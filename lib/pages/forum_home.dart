@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'data.dart';
+import '../data.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({ Key? key }) : super(key: key);
