@@ -45,16 +45,13 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
               if (snapshot.hasData) {
                 var dt = DateTime.parse(snapshot.data!.updateDate).toLocal();
                 String formattedDate = DateFormat('dd/MM/yyyy – HH:mm a').format(dt);
-                
-                if (_authorReplies.isEmpty){
-                  for (var comment in snapshot.data!.comments) {
-                    final TextEditingController _authorReply = TextEditingController();
-                    final TextEditingController _contentReply = TextEditingController();
+                for (var comment in snapshot.data!.comments) {
+                  final TextEditingController _authorReply = TextEditingController();
+                  final TextEditingController _contentReply = TextEditingController();
 
-                    _authorReplies.add(_authorReply);
-                    _contentReplies.add(_contentReply);
-                    isSwitchedReplies.add(isSwitchedReply);
-                  }
+                  _authorReplies.add(_authorReply);
+                  _contentReplies.add(_contentReply);
+                  isSwitchedReplies.add(isSwitchedReply);
                 }
 
                 return Stack(
