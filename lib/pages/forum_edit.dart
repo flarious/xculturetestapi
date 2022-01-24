@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:xculturetestapi/data.dart';
 
@@ -16,7 +17,6 @@ class _EditForumPageState extends State<EditForumPage>{
   final TextEditingController _subtitle = TextEditingController();
   final TextEditingController _thumbnail = TextEditingController();
   final TextEditingController _content = TextEditingController();
-  final TextEditingController _author = TextEditingController();
   bool? incognito;
 
   @override
@@ -28,7 +28,6 @@ class _EditForumPageState extends State<EditForumPage>{
       _subtitle.text = forumDetail.subtitle;
       _thumbnail.text = forumDetail.thumbnail;
       _content.text = forumDetail.content;
-      _author.text = forumDetail.author;
       incognito = forumDetail.incognito;
     }
 
@@ -68,20 +67,6 @@ class _EditForumPageState extends State<EditForumPage>{
                   controller: _subtitle,
                   decoration: const InputDecoration(
                     labelText: "Subtitle",
-                    labelStyle: TextStyle(color: Colors.grey),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey
-                      ),
-                    ),
-                  ),
-                ),
-                /* Temporary Author field, will delete after user system has been implemented */
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _author,
-                  decoration: const InputDecoration(
-                    labelText: "Author",
                     labelStyle: TextStyle(color: Colors.grey),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -177,8 +162,8 @@ class _EditForumPageState extends State<EditForumPage>{
                     minimumSize: const Size(350, 50),
                   ),
                   onPressed: (){
-                    // Fluttertoast.showToast(msg: "Your post have been created.");
-                    updateForumDetail(forumDetail.id, _title.text, _subtitle.text, _thumbnail.text, _content.text, _author.text, incognito!);
+                    Fluttertoast.showToast(msg: "Your post have been edited.");
+                    updateForumDetail(forumDetail.id, _title.text, _subtitle.text, _thumbnail.text, _content.text, incognito!);
                     Navigator.pop(context, forumDetail.id);
                   }, 
                   child: const Text("Edit Forum")
@@ -192,7 +177,7 @@ class _EditForumPageState extends State<EditForumPage>{
     );
   }
 
-  updateForumDetail(int forumID, String title, String subtitle, String thumbnailUrl, String content, String author, bool incognito) async {
+  updateForumDetail(int forumID, String title, String subtitle, String thumbnailUrl, String content, bool incognito) async {
     final response = await http.put(
       Uri.parse('http://10.0.2.2:3000/forums/$forumID'),
       headers: <String, String>{
@@ -203,7 +188,6 @@ class _EditForumPageState extends State<EditForumPage>{
         'subtitle': subtitle,
         'thumbnail': thumbnailUrl,
         'content': content,
-        'author': author,
         'incognito': incognito,
       }),
     );

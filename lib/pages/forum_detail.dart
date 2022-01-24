@@ -17,9 +17,7 @@ class ForumDetailPage extends StatefulWidget {
 class _ForumDetailPageState extends State<ForumDetailPage> {
   Future<Forum>? fullDetail;
 
-  final TextEditingController _authorComment = TextEditingController();
   final TextEditingController _contentComment = TextEditingController();
-  final List<TextEditingController> _authorReplies = [];
   final List<TextEditingController> _contentReplies = [];
   final List<bool> isSwitchedReplies = [];
   bool isSwitchedComment = false;
@@ -46,10 +44,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                 var dt = DateTime.parse(snapshot.data!.updateDate).toLocal();
                 String formattedDate = DateFormat('dd/MM/yyyy – HH:mm a').format(dt);
                 for (var comment in snapshot.data!.comments) {
-                  final TextEditingController _authorReply = TextEditingController();
                   final TextEditingController _contentReply = TextEditingController();
 
-                  _authorReplies.add(_authorReply);
                   _contentReplies.add(_contentReply);
                   isSwitchedReplies.add(isSwitchedReply);
                 }
@@ -171,10 +167,6 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                     fontWeight: FontWeight.bold)
                             ),
                             TextField(
-                              controller: _authorComment,
-                              decoration: const InputDecoration(hintText: "Author"),
-                            ),
-                            TextField(
                               controller: _contentComment,
                               decoration: const InputDecoration(hintText: "Content"),
                             ),
@@ -192,7 +184,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                      sendCommentDetail(snapshot.data!.id, _authorComment.text, _contentComment.text, isSwitchedComment);
+                                      sendCommentDetail(snapshot.data!.id, _contentComment.text, isSwitchedComment);
                                       refreshPage(snapshot.data!.id);
                                     });
                                   }, 
@@ -247,10 +239,6 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                         ),
                                       ),
                                       TextField(
-                                        controller: _authorReplies[index],
-                                        decoration: const InputDecoration(hintText: "Author"),
-                                      ),
-                                      TextField(
                                         controller: _contentReplies[index],
                                         decoration: const InputDecoration(hintText: "Content"),
                                       ),
@@ -268,7 +256,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                           ElevatedButton(
                                             onPressed: () {
                                               setState(() {
-                                                sendReplyDetail(snapshot.data!.id, snapshot.data!.comments[index].id, _authorReplies[index].text, _contentReplies[index].text, isSwitchedReplies[index]);
+                                                sendReplyDetail(snapshot.data!.id, snapshot.data!.comments[index].id, _contentReplies[index].text, isSwitchedReplies[index]);
                                                 refreshPage(snapshot.data!.id);
                                               });
                                             }, 
@@ -404,14 +392,13 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     }
   }
 
-  sendCommentDetail(forumID, author, content, incognito) async {
+  sendCommentDetail(forumID, content, incognito) async {
     final response = await http.post(
       Uri.parse('http://10.0.2.2:3000/forums/$forumID/comments'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'author': author,
         'content': content,
         'incognito': incognito,
       }),
@@ -451,14 +438,13 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     }
   }
 
-  sendReplyDetail(forumID, commentID, author, content, incognito) async {
+  sendReplyDetail(forumID, commentID, content, incognito) async {
     final response = await http.post(
       Uri.parse('http://10.0.2.2:3000/forums/$forumID/comments/$commentID/replies'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'author': author,
         'content': content,
         'incognito': incognito,
       }),

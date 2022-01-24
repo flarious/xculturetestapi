@@ -13,15 +13,13 @@ class EditCommentPage extends StatefulWidget {
 
 class _EditCommentPageState extends State<EditCommentPage> {
   final TextEditingController _content = TextEditingController();
-  final TextEditingController _author = TextEditingController();
-  bool? _incognito;
+  bool? incognito;
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as EditCommentArguments;
-    _author.text = args.comment.author;
     _content.text = args.comment.content;
-    (_incognito == null) ? _incognito = args.comment.incognito : _incognito ;
+    (incognito == null) ? incognito = args.comment.incognito : incognito ;
 
 
    return Scaffold(
@@ -41,28 +39,41 @@ class _EditCommentPageState extends State<EditCommentPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _author,
-            ),
-            TextField(
+            const SizedBox(height: 20),
+            TextFormField(
+              maxLines: 10,
+              keyboardType: TextInputType.multiline,
               controller: _content,
+              decoration: const InputDecoration(
+                hintText: "Enter Your Content Here",
+                hintStyle: TextStyle(color: Colors.grey),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey
+                  ),
+                ),
+              ),
             ),
-            Switch(
-              value: _incognito!, 
-              onChanged: (value) {
+            const SizedBox(height: 20),
+            SwitchListTile(
+              title: const Text("Incognito"),
+              activeColor: Theme.of(context).primaryColor,
+              subtitle: const Text("If incognito is on this post will hide author/owner username."),
+              value: incognito!, 
+              onChanged: (selected){
                 setState(() {
-                  _incognito = value;
+                  incognito = !incognito!;
                 });
               }
             ),
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  updateCommentDetail(args.forumID, args.comment.id, _author.text, _content.text, _incognito);
+                  updateCommentDetail(args.forumID, args.comment.id, _content.text, incognito);
                 });
                 Navigator.pop(context, args.forumID);
               }, 
-              child: const Text('Edit Forum'),
+              child: const Text('Edit Comment'),
             )
           ],
         ),
@@ -70,7 +81,7 @@ class _EditCommentPageState extends State<EditCommentPage> {
     );
   }
 
-  updateCommentDetail(forumID, commentID, author, content, incognito) async {
+  updateCommentDetail(forumID, commentID, content, incognito) async {
     final response = await http.put(
       Uri.parse('http://10.0.2.2:3000/forums/$forumID/comments/$commentID'),
       headers: <String, String>{
@@ -78,7 +89,6 @@ class _EditCommentPageState extends State<EditCommentPage> {
       },
       body: jsonEncode(<String, dynamic>{
         'content': content,
-        'author': author,
         'incognito': incognito,
       }),
     );
