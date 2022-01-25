@@ -126,6 +126,15 @@ class _ForumPageState extends State<ForumPage> {
                                       snapshot.data![index].subtitle,
                                       style: const TextStyle(fontSize: 15), // Forum Subtitle
                                     ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: snapshot.data![index].tags.map((tag) => Padding(
+                                        padding: const EdgeInsets.only(right: 10),
+                                        child: Chip(
+                                          label: Text(tag.name),
+                                        ),
+                                      )).toList(),
+                                    ),
                                   ],
                                 ),
                               )

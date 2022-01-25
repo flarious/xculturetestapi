@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -14,6 +15,8 @@ class EditCommentPage extends StatefulWidget {
 class _EditCommentPageState extends State<EditCommentPage> {
   final TextEditingController _content = TextEditingController();
   bool? incognito;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +56,14 @@ class _EditCommentPageState extends State<EditCommentPage> {
                   ),
                 ),
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please enter forum's comment";
+                }
+                else {
+                  return null;
+                }
+              },
             ),
             const SizedBox(height: 20),
             SwitchListTile(
@@ -68,10 +79,11 @@ class _EditCommentPageState extends State<EditCommentPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                setState(() {
+                if(_formKey.currentState!.validate()) {
                   updateCommentDetail(args.forumID, args.comment.id, _content.text, incognito);
-                });
-                Navigator.pop(context, args.forumID);
+                  Fluttertoast.showToast(msg: "Your reply has been updated");
+                  Navigator.pop(context, args.forumID);
+                }
               }, 
               child: const Text('Edit Comment'),
             )

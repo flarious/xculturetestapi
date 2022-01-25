@@ -1,8 +1,11 @@
 
+import 'package:find_dropdown/find_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../data.dart';
 class NewForumPage extends StatefulWidget {
   const NewForumPage({ Key? key }) : super(key: key);
   @override
@@ -15,7 +18,16 @@ class _NewForumPageState extends State<NewForumPage> {
   final TextEditingController _content = TextEditingController();
   bool incognito = false;
 
+  List<Tag> arr = [];
+  Future<List<Tag>>? tags;
+
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    tags = getTags();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,36 +110,43 @@ class _NewForumPageState extends State<NewForumPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: const [
-                    /* const */ Text("Add Tags"),
-                    /* const */ SizedBox(width: 20),
-                    /*
-                    FindDropdown(
-                      items: tags,
-                      onChanged: (item) {
-                        setState(() {
-                          if(!arr.contains(item)){
-                            arr.add(item.toString());
-                            print(arr);
-                          }
-                        });
-                      },
-                      // ignore: deprecated_member_use
-                      searchHint: "Search Here",
-                      backgroundColor: Colors.white,
-                    ),
-                    */
-                  ],
+                FutureBuilder<List<Tag>>(
+                  future: tags,
+                  builder: (BuildContext context, AsyncSnapshot<List<Tag>> snapshot) {
+                    if(snapshot.hasData) {
+                      return Row(
+                        children: [
+                          const Text("Add Tags"),
+                          const SizedBox(width: 20),
+                          FindDropdown<Tag>(
+                            items: snapshot.data,
+                            onChanged: (item) {
+                              setState(() {
+                                if(!arr.contains(item)){
+                                  arr.add(item!);
+                                }
+                              });
+                            },
+                            // ignore: deprecated_member_use
+                            searchHint: "Search here",
+                            backgroundColor: Colors.white,
+                          ),
+                        ],
+                      );
+                    }
+                    else {
+                      return const CircularProgressIndicator();
+                    }
+                  }
                 ),
+                
                 const SizedBox(height: 20),
-                /*
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: arr.map((e) => Padding(
                     padding: const EdgeInsets.only(right: 10),
                     child: Chip(
-                      label: Text(e),
+                      label: Text(e.name),
                       deleteIcon: const Icon(Icons.clear),
                       onDeleted: () {
                         setState(() {
@@ -137,7 +156,6 @@ class _NewForumPageState extends State<NewForumPage> {
                     ),
                   )).toList(),
                 ),
-                */
                 const SizedBox(height: 20),
                 TextFormField(
                   maxLines: 10,
@@ -180,8 +198,8 @@ class _NewForumPageState extends State<NewForumPage> {
                   ),
                   onPressed: (){
                     if (_formKey.currentState!.validate()) {
-                      sendForumDetail(_title.text, _subtitle.text, _thumbnail.text, _content.text, incognito);
-                      Fluttertoast.showToast(msg: "Your post have been created.");
+                      sendForumDetail(_title.text, _subtitle.text, _thumbnail.text, _content.text, incognito, arr);
+                      Fluttertoast.showToast(msg: "Your post has been created.");
                       Future.delayed(const Duration(milliseconds: 1), () {
                         Navigator.pop(context);
                       });
@@ -197,7 +215,12 @@ class _NewForumPageState extends State<NewForumPage> {
       ),
     );
   }
-  sendForumDetail(String title, String subtitle, String thumbnailUrl, String content, bool isSwitched) async {
+  sendForumDetail(String title, String subtitle, String thumbnailUrl, String content, bool isSwitched, List<Tag> tags) async {
+    List<int> tagsID = [];
+    for (var tag in tags) {
+      tagsID.add(tag.id);
+    }
+
     final response = await http.post(
       Uri.parse('http://10.0.2.2:3000/forums'),
       headers: <String, String>{
@@ -209,6 +232,7 @@ class _NewForumPageState extends State<NewForumPage> {
         'thumbnail': thumbnailUrl,
         'content': content,
         'incognito': isSwitched,
+        'tags': tagsID,
       }),
     );
     if (response.statusCode == 201) {
@@ -216,5 +240,19 @@ class _NewForumPageState extends State<NewForumPage> {
     else {
       throw Exception("Failed to post the forum");
     }
+  }
+
+  Future<List<Tag>> getTags() async {
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/tags'));
+    final List<Tag> tagList = [];
+    if(response.statusCode == 200) {
+      var decoded = jsonDecode(response.body);
+      decoded.forEach((obj) => tagList.add(Tag.fromJson(obj)));
+      return tagList;
+    }
+    else {
+      throw Exception(response.statusCode);
+    }
+
   }
 }

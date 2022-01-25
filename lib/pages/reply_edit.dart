@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../arguments.dart';
@@ -13,6 +14,8 @@ class EditReplyPage extends StatefulWidget {
 class _EditReplyPageState extends State<EditReplyPage> {
   final TextEditingController _content = TextEditingController();
   bool? incognito;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +55,14 @@ class _EditReplyPageState extends State<EditReplyPage> {
                   ),
                 ),
               ),
+              validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter comment's reply";
+                    }
+                    else {
+                      return null;
+                    }
+                  },
             ),
             const SizedBox(height: 20),
             SwitchListTile(
@@ -67,10 +78,11 @@ class _EditReplyPageState extends State<EditReplyPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                setState(() {
+                if(_formKey.currentState!.validate()) {
                   updateReplyDetail(args.forumID, args.commentID, args.reply.id, _content.text, incognito);
-                });
-                Navigator.pop(context, args.forumID);
+                  Fluttertoast.showToast(msg: "Your reply has been updated");
+                  Navigator.pop(context, args.forumID);
+                }
               }, 
               child: const Text('Edit Forum'),
             )

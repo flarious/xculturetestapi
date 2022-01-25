@@ -104,7 +104,15 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                             Text(snapshot.data!.subtitle,
                                 style: const TextStyle(fontSize: 15)),
                             const SizedBox(height: 10),
-                            const Text("Tags Area"),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: snapshot.data!.tags.map((tag) => Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Chip(
+                                  label: Text(tag.name),
+                                ),
+                              )).toList(),
+                            ),
                             const SizedBox(height: 10),
                             Row(
                               children: [
